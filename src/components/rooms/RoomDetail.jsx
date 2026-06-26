@@ -10,7 +10,7 @@ const DRAFT_KEY = "room_draft";
 
 function loadDraft(roomId) {
   try {
-    const raw = localStorage.getItem(DRAFT_KEY);
+    const raw = sessionStorage.getItem(DRAFT_KEY);
     if (!raw) return null;
     const draft = JSON.parse(raw);
     return draft.roomId === roomId ? draft : null;
@@ -18,11 +18,11 @@ function loadDraft(roomId) {
 }
 
 function saveDraft(data) {
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+  sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data));
 }
 
 function clearDraft() {
-  localStorage.removeItem(DRAFT_KEY);
+  sessionStorage.removeItem(DRAFT_KEY);
 }
 
 export default function RoomDetail() {
@@ -99,7 +99,7 @@ export default function RoomDetail() {
   };
 
   const handleBooking = (cardDetails) => {
-    if (!user) { localStorage.setItem("login_redirect", window.location.hash.replace(/^#/, "")); navigate("/login"); return; }
+    if (!user) { sessionStorage.setItem("login_redirect", window.location.hash.replace(/^#/, "")); navigate("/login"); return; }
     const paymentError = validatePayment(cardDetails);
     if (paymentError) { return paymentError; }
 
@@ -275,7 +275,7 @@ export default function RoomDetail() {
                       {!user ? (
                         <div className="text-center space-y-3">
                           <p className="text-sm text-gray-600">You need to log in to complete the booking.</p>
-                          <button onClick={() => { localStorage.setItem("login_redirect", window.location.hash.replace(/^#/, "")); navigate("/login"); }}
+                          <button onClick={() => { sessionStorage.setItem("login_redirect", window.location.hash.replace(/^#/, "")); navigate("/login"); }}
                             className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition">
                             Proceed to Login
                           </button>
