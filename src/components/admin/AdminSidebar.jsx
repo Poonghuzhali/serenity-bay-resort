@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 
 const links = [
   { to: "/admin", label: "📊 Dashboard", end: true },
@@ -26,16 +27,35 @@ export default function AdminSidebar() {
 }
 
 export function MobileAdminNav() {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const current = links.find((l) =>
+    l.end ? location.pathname === l.to : location.pathname.startsWith(l.to)
+  );
+
   return (
-    <nav className="md:hidden flex gap-2 overflow-x-auto pb-2 mb-4">
-      {links.map((l) => (
-        <NavLink key={l.to} to={l.to} end={l.end}
-          className={({ isActive }) =>
-            `px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${isActive ? "bg-blue-600 text-white" : "bg-white text-gray-600"}`
-          }>
-          {l.label}
-        </NavLink>
-      ))}
-    </nav>
+    <div className="md:hidden mb-4 relative">
+      <button onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-400 transition">
+        <span>{current?.label || "Navigate..."}</span>
+        <svg className={`w-4 h-4 transition ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+          {links.map((l) => {
+            const isActive = l.end ? location.pathname === l.to : location.pathname.startsWith(l.to);
+            return (
+              <button key={l.to} onClick={() => { navigate(l.to); setOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 text-sm transition ${isActive ? "bg-blue-600 text-white font-medium" : "text-gray-600 hover:bg-gray-50"}`}>
+                {l.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
