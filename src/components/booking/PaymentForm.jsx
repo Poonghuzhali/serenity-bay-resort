@@ -12,6 +12,7 @@ function formatExpiry(value) {
 }
 
 export default function PaymentForm({ onSubmit, total, roomName }) {
+  const [method, setMethod] = useState("card");
   const [card, setCard] = useState({ name: "", cardNumber: "", expiry: "", cvv: "" });
   const [errors, setErrors] = useState({});
   const [processing, setProcessing] = useState(false);
@@ -30,14 +31,13 @@ export default function PaymentForm({ onSubmit, total, roomName }) {
     e.preventDefault();
     setProcessing(true);
 
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, method === "online" ? 800 : 1500));
 
-    const result = onSubmit({
-      name: card.name,
-      cardNumber: card.cardNumber,
-      expiry: card.expiry,
-      cvv: card.cvv,
-    });
+    const payload = method === "online"
+      ? { method: "online" }
+      : { name: card.name, cardNumber: card.cardNumber, expiry: card.expiry, cvv: card.cvv };
+
+    const result = onSubmit(payload);
 
     if (result) setErrors(result);
     setProcessing(false);
@@ -58,19 +58,38 @@ export default function PaymentForm({ onSubmit, total, roomName }) {
         <div className="flex justify-between font-bold mt-1"><span>Total:</span><span className="text-blue-600">₹{total.toLocaleString("en-IN")}</span></div>
       </div>
 
+      <div className="flex gap-3 mb-4">
+        <button type="button" onClick={() => setMethod("card")}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-medium border-2 transition ${method === "card" ? "border-blue-600 bg-blue-50 text-blue-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+          💳 Card Payment
+        </button>
+        <button type="button" onClick={() => setMethod("online")}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-medium border-2 transition ${method === "online" ? "border-green-600 bg-green-50 text-green-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+          📱 Online Payment
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-3">
-        {fields.map((f) => (
-          <div key={f.name}>
-            <label className="block text-xs font-medium text-gray-700 mb-1">{f.label}</label>
-            <input
-              type={f.type} name={f.name} value={card[f.name]} onChange={handleChange}
-              maxLength={f.maxLength}
-              className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition ${errors[f.name] ? "border-red-500" : "border-gray-300"}`}
-              placeholder={f.placeholder}
-            />
-            {errors[f.name] && <p className="text-red-500 text-xs mt-1">{errors[f.name]}</p>}
+        {method === "card" ? (
+          <>
+            {fields.map((f) => (
+              <div key={f.name}>
+                <label className="block text-xs font-medium text-gray-700 mb-1">{f.label}</label>
+                <input
+                  type={f.type} name={f.name} value={card[f.name]} onChange={handleChange}
+                  maxLength={f.maxLength}
+                  className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition ${errors[f.name] ? "border-red-500" : "border-gray-300"}`}
+                  placeholder={f.placeholder}
+                />
+                {errors[f.name] && <p className="text-red-500 text-xs mt-1">{errors[f.name]}</p>}
+              </div>
+            ))}
+          </>
+        ) : (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-700 text-center">
+            You will be redirected to your preferred online payment method.
           </div>
-        ))}
+        )}
 
         {errors.general && (
           <div className="bg-red-50 text-red-600 p-2 rounded text-sm">{errors.general}</div>
@@ -86,13 +105,15 @@ export default function PaymentForm({ onSubmit, total, roomName }) {
               </svg>
               Processing Payment...
             </span>
-          ) : "Pay ₹" + total.toLocaleString("en-IN")}
+          ) : `Pay ₹${total.toLocaleString("en-IN")} (${method === "online" ? "Online" : "Card"})`}
         </button>
       </form>
 
-      <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-600">
-        🔒 Test Card: 4242 4242 4242 4242 | Any future expiry | Any 3-digit CVV
-      </div>
+      {method === "card" && (
+        <div className="mt-3 p-2 bg-blue-50 rounded text-xs text-blue-600">
+          🔒 Test Card: 4242 4242 4242 4242 | Any future expiry | Any 3-digit CVV
+        </div>
+      )}
     </div>
   );
 }

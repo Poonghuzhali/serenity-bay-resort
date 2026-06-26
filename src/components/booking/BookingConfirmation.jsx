@@ -22,7 +22,7 @@ export default function BookingConfirmation({ booking, room, nights, quantity })
             <div><span className="text-gray-500">Nights:</span><br /><span className="font-semibold">{nights}</span></div>
             <div><span className="text-gray-500">Guests:</span><br /><span className="font-semibold">{booking.adults} Adult{booking.adults > 1 ? "s" : ""}{booking.children > 0 ? `, ${booking.children} Child${booking.children > 1 ? "ren" : ""}` : ""}</span></div>
             {booking.extraBed && <div><span className="text-gray-500">Extra Bed:</span><br /><span className="font-semibold">Yes</span></div>}
-            <div><span className="text-gray-500">Card:</span><br /><span className="font-semibold">**** {booking.cardLast4}</span></div>
+            <div><span className="text-gray-500">Payment:</span><br /><span className="font-semibold">{booking.paymentMethod === "Online" ? "📱 Online" : "💳 Card **** " + booking.cardLast4}</span></div>
           </div>
         </div>
 

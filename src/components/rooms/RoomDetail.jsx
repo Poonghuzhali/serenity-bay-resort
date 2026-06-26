@@ -98,10 +98,13 @@ export default function RoomDetail() {
     }
   };
 
-  const handleBooking = (cardDetails) => {
+  const handleBooking = (paymentData) => {
     if (!user) { sessionStorage.setItem("login_redirect", window.location.hash.replace(/^#/, "")); navigate("/login"); return; }
-    const paymentError = validatePayment(cardDetails);
-    if (paymentError) { return paymentError; }
+
+    if (paymentData.method !== "online") {
+      const paymentError = validatePayment(paymentData);
+      if (paymentError) { return paymentError; }
+    }
 
     const result = createBooking({
       roomId: room.id,
@@ -117,7 +120,8 @@ export default function RoomDetail() {
       extraBed,
       rooms: quantity,
       totalAmount: total,
-      cardLast4: cardDetails.cardNumber.replace(/\s/g, "").slice(-4),
+      paymentMethod: paymentData.method === "online" ? "Online" : "Card",
+      cardLast4: paymentData.method === "online" ? "Online" : paymentData.cardNumber.replace(/\s/g, "").slice(-4),
     });
 
     if (result.success) {

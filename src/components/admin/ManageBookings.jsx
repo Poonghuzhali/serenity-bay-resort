@@ -74,6 +74,7 @@ export default function ManageBookings() {
                 <th className="p-4">Check Out</th>
                 <th className="p-4">Nights</th>
                 <th className="p-4">Amount</th>
+                <th className="p-4">Payment</th>
                 <th className="p-4">Status</th>
                 <th className="p-4">Actions</th>
               </tr>
@@ -95,6 +96,7 @@ export default function ManageBookings() {
                     <td className="p-4">{b.checkOut}</td>
                     <td className="p-4">{nights}</td>
                     <td className="p-4 font-medium">₹{(b.totalAmount || 0).toLocaleString("en-IN")}</td>
+                    <td className="p-4 text-xs">{b.paymentMethod || "Card"} {b.cardLast4 && b.paymentMethod !== "Online" ? "**** " + b.cardLast4 : ""}</td>
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${b.status === "confirmed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                         {b.status}
@@ -118,7 +120,7 @@ export default function ManageBookings() {
                 );
               })}
               {sorted.length === 0 && (
-                <tr><td colSpan={11} className="p-8 text-center text-gray-400">
+                <tr><td colSpan={12} className="p-8 text-center text-gray-400">
                   {bookings.length === 0 ? "No bookings found" : "No bookings match your search"}
                 </td></tr>
               )}
