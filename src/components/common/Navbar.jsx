@@ -18,6 +18,17 @@ export default function Navbar() {
     { to: "/contact", label: "Contact" },
   ];
 
+  const adminLinks = [
+    { to: "/admin", label: "📊 Dashboard" },
+    { to: "/admin/rooms", label: "🏠 Manage Rooms" },
+    { to: "/admin/bookings", label: "📋 All Bookings" },
+    { to: "/admin/messages", label: "✉️ Messages" },
+  ];
+
+  const customerLinks = [
+    { to: "/dashboard", label: "📋 My Bookings" },
+  ];
+
   if (user) {
     if (user.role === "admin") {
       links.push({ to: "/admin", label: "Admin Panel" });
@@ -73,10 +84,30 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden bg-white border-t pb-4">
           {links.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block px-4 py-2 text-gray-600 hover:bg-gray-50">
+            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block px-4 py-2 text-gray-600 hover:bg-gray-50 font-medium">
               {l.label}
             </Link>
           ))}
+          {user?.role === "admin" && (
+            <div className="border-t mx-4 pt-2 mt-2">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Admin</p>
+              {adminLinks.map((l) => (
+                <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block px-4 py-1.5 text-sm text-gray-500 hover:text-blue-600">
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          )}
+          {user?.role === "customer" && (
+            <div className="border-t mx-4 pt-2 mt-2">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">My Account</p>
+              {customerLinks.map((l) => (
+                <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block px-4 py-1.5 text-sm text-gray-500 hover:text-blue-600">
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          )}
           <div className="border-t mt-2 pt-2 px-4">
             {user ? (
               <>
