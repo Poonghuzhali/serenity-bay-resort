@@ -46,7 +46,7 @@ export default function Navbar() {
             <span className="text-xl font-bold text-gray-800">Serenity Bay</span>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-6">
             {links.map((l) => (
               <Link key={l.to} to={l.to} className="text-gray-600 hover:text-blue-600 font-medium transition">
                 {l.label}
@@ -69,7 +69,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <button onClick={() => setOpen(!open)} className="md:hidden flex items-center text-gray-600 p-2">
+          <button onClick={() => setOpen(!open)} className="lg:hidden flex items-center text-gray-600 p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {open ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -82,7 +82,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-white border-t pb-4">
+        <div className="lg:hidden bg-white border-t pb-4">
           {links.map((l) => (
             <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block px-4 py-2 text-gray-600 hover:bg-gray-50 font-medium">
               {l.label}

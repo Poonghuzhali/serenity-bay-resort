@@ -10,7 +10,7 @@ const links = [
 
 export default function AdminSidebar() {
   return (
-    <aside className="w-64 bg-white shadow-md min-h-screen p-4 hidden md:block">
+    <aside className="w-64 bg-white shadow-md min-h-screen p-4 hidden lg:block">
       <h2 className="text-lg font-bold text-gray-800 mb-6 px-4">Admin Panel</h2>
       <nav className="space-y-1">
         {links.map((l) => (
@@ -35,7 +35,7 @@ export function MobileAdminNav() {
   );
 
   return (
-    <div className="md:hidden mb-4 relative">
+    <div className="lg:hidden mb-4 relative">
       <button onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:border-blue-400 transition">
         <span>{current?.label || "Navigate..."}</span>
