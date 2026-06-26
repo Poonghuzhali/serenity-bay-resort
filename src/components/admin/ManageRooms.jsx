@@ -20,7 +20,7 @@ export default function ManageRooms() {
       <div className="space-y-4">
         {rooms.map((room) => {
           const bookings = roomBookings[room.id];
-          const bookedCount = bookings.length;
+          const bookedCount = bookings.reduce((s, b) => s + (b.rooms || 1), 0);
           const available = room.totalRooms - bookedCount;
 
           return (

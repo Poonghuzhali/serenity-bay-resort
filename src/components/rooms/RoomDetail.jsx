@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import rooms from "../../data/rooms";
 import { useBooking } from "../../context/BookingContext";
 import { useAuth } from "../../context/AuthContext";
@@ -8,6 +8,7 @@ import BookingConfirmation from "../booking/BookingConfirmation";
 
 export default function RoomDetail() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { getRoomAvailability, createBooking, validatePayment } = useBooking();
@@ -15,10 +16,11 @@ export default function RoomDetail() {
   const today = new Date().toISOString().split("T")[0];
   const room = rooms.find((r) => r.id === Number(id));
 
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
+  const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || "");
+  const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || "");
+  const [adults, setAdults] = useState(Number(searchParams.get("adults")) || 1);
+  const [children, setChildren] = useState(Number(searchParams.get("children")) || 0);
+  const [quantity, setQuantity] = useState(Math.max(1, Number(searchParams.get("qty")) || 1));
   const [extraBed, setExtraBed] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
   const [step, setStep] = useState(1);
@@ -42,9 +44,10 @@ export default function RoomDetail() {
     ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)))
     : 0;
   const totalGuests = adults + children;
-  const maxCapacity = extraBed ? room.capacity + 1 : room.capacity;
-  const extraBedCost = extraBed ? room.extraBedPrice * nights : 0;
-  const roomCost = room.price * nights;
+  const perRoomCapacity = extraBed ? room.capacity + 1 : room.capacity;
+  const maxCapacity = perRoomCapacity * quantity;
+  const extraBedCost = extraBed ? room.extraBedPrice * nights * quantity : 0;
+  const roomCost = room.price * nights * quantity;
   const total = roomCost + extraBedCost;
 
   const handleCheckAvailability = () => {
@@ -52,15 +55,19 @@ export default function RoomDetail() {
     if (new Date(checkOut) <= new Date(checkIn)) { setError("Check-out must be after check-in"); return; }
     if (adults < 1) { setError("At least 1 adult required"); return; }
     if (totalGuests > maxCapacity) {
-      if (extraBed) setError(`Maximum ${room.capacity + 1} guests allowed (with extra bed). Reduce guests.`);
-      else setError(`Maximum ${room.capacity} guests allowed. Add extra bed for more space.`);
+      setError(`Maximum ${perRoomCapacity} guest(s) per room (${quantity} room(s) = ${maxCapacity} guests). Reduce guests or book more rooms.`);
       return;
     }
     setError("");
     const result = getRoomAvailability(room.id, checkIn, checkOut);
     setAvailability(result);
-    if (result.available) setStep(2);
-    else setError("This room is not available for selected dates");
+    if (result.available && result.availableRooms >= quantity) {
+      setStep(2);
+    } else if (result.availableRooms < quantity) {
+      setError(`Only ${result.availableRooms} of ${room.totalRooms} rooms available. Reduce quantity to ${result.availableRooms}.`);
+    } else {
+      setError("This room is not available for selected dates");
+    }
   };
 
   const handleBooking = (cardDetails) => {
@@ -80,6 +87,7 @@ export default function RoomDetail() {
       children,
       totalGuests,
       extraBed,
+      rooms: quantity,
       totalAmount: total,
       cardLast4: cardDetails.cardNumber.replace(/\s/g, "").slice(-4),
     });
@@ -95,13 +103,15 @@ export default function RoomDetail() {
     }
   };
 
+  const currentAvail = availability ? availability.availableRooms : null;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link to="/rooms" className="text-blue-600 hover:underline mb-6 inline-block">← Back to Rooms</Link>
 
         {step === 3 && bookingResult ? (
-          <BookingConfirmation booking={bookingResult} room={room} nights={nights} />
+          <BookingConfirmation booking={bookingResult} room={room} nights={nights} quantity={quantity} />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
@@ -123,7 +133,7 @@ export default function RoomDetail() {
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">{room.name}</h1>
                 <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
                   <span>🏷️ {room.type.charAt(0).toUpperCase() + room.type.slice(1)}</span>
-                  <span>👤 Up to {room.capacity} guests</span>
+                  <span>👤 Up to {room.capacity} guests per room</span>
                   <span>📐 {room.size}</span>
                   <span>🛏️ {room.beds}</span>
                 </div>
@@ -150,7 +160,7 @@ export default function RoomDetail() {
 
                 {availability && !availability.available && (
                   <div className="bg-yellow-50 text-yellow-700 p-3 rounded-lg mb-4 text-sm">
-                    Only {availability.totalRooms - availability.bookedCount} of {availability.totalRooms} rooms available
+                    Only {availability.availableRooms} of {room.totalRooms} rooms available
                   </div>
                 )}
 
@@ -169,51 +179,61 @@ export default function RoomDetail() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
-                      <select value={adults} onChange={(e) => { setAdults(Number(e.target.value)); setStep(1); setError(""); }}
+                      <select value={adults} onChange={(e) => { setAdults(Number(e.target.value)); setStep(1); setAvailability(null); setError(""); }}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        {Array.from({ length: room.capacity }, (_, i) => i + 1).map((n) => (
+                        {Array.from({ length: room.capacity * 2 }, (_, i) => i + 1).map((n) => (
                           <option key={n} value={n}>{n}</option>
                         ))}
                       </select>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
-                      <select value={children} onChange={(e) => { setChildren(Number(e.target.value)); setStep(1); setError(""); }}
+                      <select value={children} onChange={(e) => { setChildren(Number(e.target.value)); setStep(1); setAvailability(null); setError(""); }}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        {Array.from({ length: room.capacity + 1 }, (_, i) => i).map((n) => (
+                        {Array.from({ length: room.capacity * 2 + 1 }, (_, i) => i).map((n) => (
                           <option key={n} value={n}>{n}</option>
                         ))}
                       </select>
                     </div>
                   </div>
 
-                  {totalGuests > 0 && totalGuests > room.capacity && !extraBed && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Rooms</label>
+                    <select value={quantity} onChange={(e) => { setQuantity(Number(e.target.value)); setStep(1); setAvailability(null); setError(""); }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                      {Array.from({ length: currentAvail ?? room.totalRooms }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>{n} room{n > 1 ? "s" : ""}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {totalGuests > 0 && totalGuests > perRoomCapacity && !extraBed && quantity === 1 && (
                     <div className="text-yellow-600 text-sm bg-yellow-50 p-3 rounded-lg">
-                      Guest count exceeds room capacity ({room.capacity}). Add an extra bed below.
+                      Guest count exceeds room capacity ({room.capacity}). Add an extra bed or book more rooms.
                     </div>
                   )}
 
                   <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                    <input type="checkbox" checked={extraBed} onChange={(e) => { setExtraBed(e.target.checked); setStep(1); setError(""); }}
+                    <input type="checkbox" checked={extraBed} onChange={(e) => { setExtraBed(e.target.checked); setStep(1); setAvailability(null); setError(""); }}
                       className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
                     <div>
                       <span className="text-sm font-medium text-gray-700">Add Extra Bed</span>
-                      <span className="text-sm text-gray-400 ml-2">+₹{room.extraBedPrice}/night</span>
+                      <span className="text-sm text-gray-400 ml-2">+₹{room.extraBedPrice}/night/room</span>
                     </div>
                   </label>
 
                   {totalGuests > maxCapacity && (
                     <div className="text-red-500 text-sm">
-                      Maximum {maxCapacity} guests allowed. Reduce guest count.
+                      Maximum {maxCapacity} guests across {quantity} room(s). Reduce guest count or increase rooms.
                     </div>
                   )}
 
                   {nights > 0 && (
                     <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
-                      <div className="flex justify-between"><span>₹{room.price.toLocaleString("en-IN")} x {nights} nights</span><span>₹{roomCost.toLocaleString("en-IN")}</span></div>
+                      <div className="flex justify-between"><span>₹{room.price.toLocaleString("en-IN")} x {quantity} room(s) x {nights} nights</span><span>₹{roomCost.toLocaleString("en-IN")}</span></div>
                       {extraBed && (
                         <div className="flex justify-between text-gray-600">
-                          <span>Extra bed ₹{room.extraBedPrice.toLocaleString("en-IN")} x {nights}</span><span>+₹{extraBedCost.toLocaleString("en-IN")}</span>
+                          <span>Extra bed ₹{room.extraBedPrice.toLocaleString("en-IN")} x {quantity} x {nights}</span><span>+₹{extraBedCost.toLocaleString("en-IN")}</span>
                         </div>
                       )}
                       <div className="border-t pt-2 flex justify-between font-bold text-base">
@@ -230,7 +250,19 @@ export default function RoomDetail() {
                   )}
 
                   {step === 2 && (
-                    <PaymentForm onSubmit={handleBooking} total={total} roomName={room.name} />
+                    <>
+                      {!user ? (
+                        <div className="text-center space-y-3">
+                          <p className="text-sm text-gray-600">You need to log in to complete the booking.</p>
+                          <button onClick={() => navigate("/login?redirect=" + encodeURIComponent(window.location.href))}
+                            className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition">
+                            Proceed to Login
+                          </button>
+                        </div>
+                      ) : (
+                        <PaymentForm onSubmit={handleBooking} total={total} roomName={room.name} />
+                      )}
+                    </>
                   )}
                 </div>
               </div>

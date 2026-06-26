@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
-export default function BookingConfirmation({ booking, room, nights }) {
+export default function BookingConfirmation({ booking, room, nights, quantity }) {
   const { user } = useAuth();
 
   return (
@@ -15,7 +15,7 @@ export default function BookingConfirmation({ booking, room, nights }) {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div><span className="text-gray-500">Booking ID:</span><br /><span className="font-semibold">{booking.id}</span></div>
             <div><span className="text-gray-500">Status:</span><br /><span className="text-green-600 font-semibold">✓ Confirmed</span></div>
-            <div><span className="text-gray-500">Room:</span><br /><span className="font-semibold">{room.name}</span></div>
+            <div><span className="text-gray-500">Room(s):</span><br /><span className="font-semibold">{room.name} × {(booking.rooms || quantity || 1)}</span></div>
             <div><span className="text-gray-500">Total Paid:</span><br /><span className="font-semibold text-blue-600">₹{booking.totalAmount?.toLocaleString("en-IN")}</span></div>
             <div><span className="text-gray-500">Check In:</span><br /><span className="font-semibold">{booking.checkIn}</span></div>
             <div><span className="text-gray-500">Check Out:</span><br /><span className="font-semibold">{booking.checkOut}</span></div>

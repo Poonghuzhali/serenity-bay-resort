@@ -68,6 +68,7 @@ export default function ManageBookings() {
                 <th className="p-4">Guest</th>
                 <th className="p-4">Email</th>
                 <th className="p-4">Room</th>
+                <th className="p-4">Rooms</th>
                 <th className="p-4">Guests</th>
                 <th className="p-4">Check In</th>
                 <th className="p-4">Check Out</th>
@@ -88,6 +89,7 @@ export default function ManageBookings() {
                     <td className="p-4 font-medium">{b.userName}</td>
                     <td className="p-4 text-gray-500">{b.userEmail}</td>
                     <td className="p-4">{b.roomName}</td>
+                    <td className="p-4 text-center">{b.rooms || 1}</td>
                     <td className="p-4 text-sm">{b.adults} Adult{b.adults > 1 ? "s" : ""}{b.children > 0 ? `, ${b.children} Child${b.children > 1 ? "ren" : ""}` : ""}{b.extraBed ? ", +Extra Bed" : ""}</td>
                     <td className="p-4">{b.checkIn}</td>
                     <td className="p-4">{b.checkOut}</td>
@@ -116,7 +118,7 @@ export default function ManageBookings() {
                 );
               })}
               {sorted.length === 0 && (
-                <tr><td colSpan={10} className="p-8 text-center text-gray-400">
+                <tr><td colSpan={11} className="p-8 text-center text-gray-400">
                   {bookings.length === 0 ? "No bookings found" : "No bookings match your search"}
                 </td></tr>
               )}

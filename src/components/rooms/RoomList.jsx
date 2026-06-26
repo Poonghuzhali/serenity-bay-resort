@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams, Link } from "react-router-dom";
 import { roomTypes } from "../../data/rooms";
 import { useBooking } from "../../context/BookingContext";
 import RoomCard from "./RoomCard";
@@ -11,8 +11,16 @@ export default function RoomList() {
   const [activeType, setActiveType] = useState("all");
   const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || "");
   const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || "");
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
+  const [adults, setAdults] = useState(Number(searchParams.get("adults")) || 1);
+  const [children, setChildren] = useState(Number(searchParams.get("children")) || 0);
+  const [roomQty, setRoomQty] = useState({});
+
+  useEffect(() => {
+    setCheckIn(searchParams.get("checkIn") || "");
+    setCheckOut(searchParams.get("checkOut") || "");
+    setAdults(Number(searchParams.get("adults")) || 1);
+    setChildren(Number(searchParams.get("children")) || 0);
+  }, [searchParams]);
 
   let available = getAvailableRooms(checkIn, checkOut);
 
@@ -31,9 +39,11 @@ export default function RoomList() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (checkIn && checkOut) {
-      setSearchParams({ checkIn, checkOut });
+      setSearchParams({ checkIn, checkOut, adults, children });
     }
   };
+
+  const roomsNeeded = (room) => Math.ceil(totalGuests / room.capacity);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -96,11 +106,24 @@ export default function RoomList() {
             <p className="text-gray-500 mt-4 text-lg">No rooms available for selected dates. Try different dates.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {available.map((room) => (
-              <RoomCard key={room.id} room={room} />
-            ))}
-          </div>
+          <>
+            {checkIn && checkOut && (
+              <div className="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl mb-6 text-sm">
+                {totalGuests} guest{totalGuests > 1 ? "s" : ""} · {checkIn} → {checkOut} · 
+                You may need multiple rooms depending on capacity. Select a quantity below and click <strong>Book Now</strong>.
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {available.map((room) => {
+                const needed = roomsNeeded(room);
+                return (
+                  <div key={room.id} className="relative">
+                    <RoomCard room={room} qty needed={needed} checkIn={checkIn} checkOut={checkOut} adults={adults} children={children} />
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -41,13 +41,13 @@ export function BookingProvider({ children }) {
     const allBookings = getBookings();
 
     return rooms.filter((room) => {
-      const bookedCount = allBookings.filter((b) => {
-        if (b.roomId !== room.id || b.status === "cancelled") return false;
+      const bookedCount = allBookings.reduce((sum, b) => {
+        if (b.roomId !== room.id || b.status === "cancelled") return sum;
         const bStart = parseDate(b.checkIn);
         const bEnd = parseDate(b.checkOut);
         const bookedDates = getDatesBetween(bStart, bEnd);
-        return requestedDates.some((d) => bookedDates.includes(d));
-      }).length;
+        return sum + (requestedDates.some((d) => bookedDates.includes(d)) ? (b.rooms || 1) : 0);
+      }, 0);
       return bookedCount < room.totalRooms;
     });
   };
@@ -64,27 +64,29 @@ export function BookingProvider({ children }) {
     const requestedDates = getDatesBetween(start, end);
     const allBookings = getBookings();
 
-    const bookedCount = allBookings.filter((b) => {
-      if (b.roomId !== roomId || b.status === "cancelled") return false;
+    const bookedCount = allBookings.reduce((sum, b) => {
+      if (b.roomId !== roomId || b.status === "cancelled") return sum;
       const bStart = parseDate(b.checkIn);
       const bEnd = parseDate(b.checkOut);
       const bookedDates = getDatesBetween(bStart, bEnd);
-      return requestedDates.some((d) => bookedDates.includes(d));
-    }).length;
+      return sum + (requestedDates.some((d) => bookedDates.includes(d)) ? (b.rooms || 1) : 0);
+    }, 0);
 
-    return { available: bookedCount < room.totalRooms, bookedCount, totalRooms: room.totalRooms };
+    const availableRooms = room.totalRooms - bookedCount;
+    return { available: bookedCount < room.totalRooms, bookedCount, totalRooms: room.totalRooms, availableRooms };
   };
 
   const createBooking = (bookingData) => {
     const allBookings = getBookings();
-    const { roomId, checkIn, checkOut } = bookingData;
+    const { roomId, checkIn, checkOut, rooms = 1 } = bookingData;
     const availability = getRoomAvailability(roomId, checkIn, checkOut);
-    if (!availability.available) {
-      return { success: false, error: "Room not available for selected dates" };
+    if (!availability.available || availability.availableRooms < rooms) {
+      return { success: false, error: "Room(s) not available for selected dates" };
     }
     const booking = {
       id: "BOK" + Date.now(),
       ...bookingData,
+      rooms,
       status: "confirmed",
       createdAt: new Date().toISOString(),
     };

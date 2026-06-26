@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const roles = [
@@ -9,13 +9,15 @@ const roles = [
 
 export default function Login() {
   const { user, login } = useAuth();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "";
   const [selectedRole, setSelectedRole] = useState("customer");
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
   if (user) {
-    return <Navigate to={user.role === "admin" ? "/admin" : "/dashboard"} replace />;
+    return <Navigate to={redirectTo || (user.role === "admin" ? "/admin" : "/dashboard")} replace />;
   }
 
   const handleChange = (e) => {
