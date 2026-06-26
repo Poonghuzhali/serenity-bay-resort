@@ -99,7 +99,7 @@ export default function RoomDetail() {
   };
 
   const handleBooking = (cardDetails) => {
-    if (!user) { navigate("/login?redirect=" + encodeURIComponent(window.location.hash)); return; }
+    if (!user) { navigate("/login?redirect=" + encodeURIComponent(window.location.hash.replace(/^#/, ""))); return; }
     const paymentError = validatePayment(cardDetails);
     if (paymentError) { return paymentError; }
 
@@ -275,7 +275,7 @@ export default function RoomDetail() {
                       {!user ? (
                         <div className="text-center space-y-3">
                           <p className="text-sm text-gray-600">You need to log in to complete the booking.</p>
-                          <button onClick={() => navigate("/login?redirect=" + encodeURIComponent(window.location.hash))}
+                          <button onClick={() => navigate("/login?redirect=" + encodeURIComponent(window.location.hash.replace(/^#/, "")))}
                             className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition">
                             Proceed to Login
                           </button>
