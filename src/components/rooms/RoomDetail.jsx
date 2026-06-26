@@ -179,21 +179,13 @@ export default function RoomDetail() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
-                      <select value={adults} onChange={(e) => { setAdults(Number(e.target.value)); setStep(1); setAvailability(null); setError(""); }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        {Array.from({ length: room.capacity * 2 }, (_, i) => i + 1).map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
+                      <input type="number" min="1" value={adults} onChange={(e) => { setAdults(Math.max(1, Number(e.target.value) || 1)); setStep(1); setAvailability(null); setError(""); }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
-                      <select value={children} onChange={(e) => { setChildren(Number(e.target.value)); setStep(1); setAvailability(null); setError(""); }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        {Array.from({ length: room.capacity * 2 + 1 }, (_, i) => i).map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
+                      <input type="number" min="0" value={children} onChange={(e) => { setChildren(Math.max(0, Number(e.target.value) || 0)); setStep(1); setAvailability(null); setError(""); }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                     </div>
                   </div>
 
