@@ -30,8 +30,6 @@ export default function RoomList() {
 
   const totalGuests = adults + children;
 
-  available = available.filter((r) => totalGuests <= r.capacity);
-
   const handleFilter = (typeId) => {
     setActiveType(typeId);
   };
@@ -67,21 +65,13 @@ export default function RoomList() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
-              <select value={adults} onChange={(e) => setAdults(Number(e.target.value))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
+              <input type="number" min="1" value={adults} onChange={(e) => setAdults(Math.max(1, Number(e.target.value) || 1))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
-              <select value={children} onChange={(e) => setChildren(Number(e.target.value))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                {[0, 1, 2, 3, 4].map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
+              <input type="number" min="0" value={children} onChange={(e) => setChildren(Math.max(0, Number(e.target.value) || 0))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
             </div>
             <div className="flex items-end">
               <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-medium transition">
@@ -109,8 +99,7 @@ export default function RoomList() {
           <>
             {checkIn && checkOut && (
               <div className="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl mb-6 text-sm">
-                {totalGuests} guest{totalGuests > 1 ? "s" : ""} · {checkIn} → {checkOut} · 
-                You may need multiple rooms depending on capacity. Select a quantity below and click <strong>Book Now</strong>.
+                {totalGuests} guest{totalGuests > 1 ? "s" : ""} · {checkIn} → {checkOut}
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

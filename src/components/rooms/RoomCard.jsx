@@ -41,11 +41,21 @@ export default function RoomCard({ room, needed, checkIn, checkOut, adults, chil
         </div>
         {checkIn && checkOut && (
           <div className="mb-4">
+            {needed > 1 && (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs p-2 rounded-lg mb-2">
+                For {adults + children} guests, you need at least <strong>{needed}</strong> rooms of this type (capacity: {room.capacity})
+              </div>
+            )}
+            {needed === 1 && adults + children > 0 && (
+              <div className="bg-green-50 border border-green-200 text-green-700 text-xs p-2 rounded-lg mb-2">
+                Fits all {adults + children} guests in 1 room (capacity: {room.capacity})
+              </div>
+            )}
             <label className="block text-xs font-medium text-gray-600 mb-1">Rooms to book</label>
             <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
               {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n} room{n > 1 ? "s" : ""} {needed && n >= needed ? "(recommended)" : ""}</option>
+                <option key={n} value={n}>{n} room{n > 1 ? "s" : ""} {n >= needed ? "(recommended)" : ""}</option>
               ))}
             </select>
           </div>
