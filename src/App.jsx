@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { BookingProvider } from "./context/BookingContext";
 import Navbar from "./components/common/Navbar";
@@ -19,7 +19,7 @@ import CustomerDashboard from "./components/customer/CustomerDashboard";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <BookingProvider>
           <div className="flex flex-col min-h-screen">
@@ -65,6 +65,6 @@ export default function App() {
           </div>
         </BookingProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
