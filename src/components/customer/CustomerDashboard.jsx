@@ -66,6 +66,7 @@ export default function CustomerDashboard() {
                       <p className="text-sm text-gray-500">Booking: {b.id}</p>
                       <div className="flex gap-4 mt-2 text-sm text-gray-600">
                         <span>📅 {b.checkIn} → {b.checkOut}</span>
+                        <span>👤 {b.adults} Adult{b.adults > 1 ? "s" : ""}{b.children > 0 ? `, ${b.children} Child${b.children > 1 ? "ren" : ""}` : ""}{b.extraBed ? " +1 Bed" : ""}</span>
                         <span>💰 ${b.totalAmount}</span>
                       </div>
                     </div>

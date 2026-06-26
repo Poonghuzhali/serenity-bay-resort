@@ -11,12 +11,18 @@ export default function RoomList() {
   const [activeType, setActiveType] = useState("all");
   const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || "");
   const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || "");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
 
   let available = getAvailableRooms(checkIn, checkOut);
 
   if (activeType !== "all") {
     available = available.filter((r) => r.type === activeType);
   }
+
+  const totalGuests = adults + children;
+
+  available = available.filter((r) => totalGuests <= r.capacity);
 
   const handleFilter = (typeId) => {
     setActiveType(typeId);
@@ -38,7 +44,7 @@ export default function RoomList() {
         </div>
 
         <form onSubmit={handleSearch} className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Check In</label>
               <input type="date" min={today} value={checkIn} onChange={(e) => setCheckIn(e.target.value)}
@@ -48,6 +54,24 @@ export default function RoomList() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Check Out</label>
               <input type="date" min={checkIn || today} value={checkOut} onChange={(e) => setCheckOut(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
+              <select value={adults} onChange={(e) => setAdults(Number(e.target.value))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
+              <select value={children} onChange={(e) => setChildren(Number(e.target.value))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                {[0, 1, 2, 3, 4].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
             </div>
             <div className="flex items-end">
               <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-medium transition">

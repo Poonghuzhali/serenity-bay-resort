@@ -15,7 +15,8 @@ const rooms = [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&q=80",
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
     ],
-    totalRooms: 10
+    totalRooms: 10,
+    extraBedPrice: 50
   },
   {
     id: 2,
@@ -33,7 +34,8 @@ const rooms = [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&q=80",
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80"
     ],
-    totalRooms: 5
+    totalRooms: 5,
+    extraBedPrice: 60
   },
   {
     id: 3,
@@ -51,7 +53,8 @@ const rooms = [
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80"
     ],
-    totalRooms: 3
+    totalRooms: 3,
+    extraBedPrice: 75
   },
   {
     id: 4,
@@ -69,7 +72,8 @@ const rooms = [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&q=80",
       "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80"
     ],
-    totalRooms: 2
+    totalRooms: 2,
+    extraBedPrice: 80
   },
   {
     id: 5,
@@ -86,7 +90,8 @@ const rooms = [
       "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80",
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&q=80"
     ],
-    totalRooms: 15
+    totalRooms: 15,
+    extraBedPrice: 40
   },
   {
     id: 6,
@@ -103,7 +108,8 @@ const rooms = [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&q=80",
       "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80"
     ],
-    totalRooms: 6
+    totalRooms: 6,
+    extraBedPrice: 60
   }
 ];
 

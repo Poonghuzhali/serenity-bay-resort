@@ -17,6 +17,9 @@ export default function RoomDetail() {
 
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [extraBed, setExtraBed] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
   const [step, setStep] = useState(1);
   const [availability, setAvailability] = useState(null);
@@ -38,11 +41,21 @@ export default function RoomDetail() {
   const nights = checkIn && checkOut
     ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)))
     : 0;
-  const total = room.price * nights;
+  const totalGuests = adults + children;
+  const maxCapacity = extraBed ? room.capacity + 1 : room.capacity;
+  const extraBedCost = extraBed ? room.extraBedPrice * nights : 0;
+  const roomCost = room.price * nights;
+  const total = roomCost + extraBedCost;
 
   const handleCheckAvailability = () => {
     if (!checkIn || !checkOut) { setError("Please select check-in and check-out dates"); return; }
     if (new Date(checkOut) <= new Date(checkIn)) { setError("Check-out must be after check-in"); return; }
+    if (adults < 1) { setError("At least 1 adult required"); return; }
+    if (totalGuests > maxCapacity) {
+      if (extraBed) setError(`Maximum ${room.capacity + 1} guests allowed (with extra bed). Reduce guests.`);
+      else setError(`Maximum ${room.capacity} guests allowed. Add extra bed for more space.`);
+      return;
+    }
     setError("");
     const result = getRoomAvailability(room.id, checkIn, checkOut);
     setAvailability(result);
@@ -63,7 +76,10 @@ export default function RoomDetail() {
       userEmail: user.email,
       checkIn,
       checkOut,
-      guests: 1,
+      adults,
+      children,
+      totalGuests,
+      extraBed,
       totalAmount: total,
       cardLast4: cardDetails.cardNumber.replace(/\s/g, "").slice(-4),
     });
@@ -150,15 +166,65 @@ export default function RoomDetail() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                   </div>
 
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
+                      <select value={adults} onChange={(e) => { setAdults(Number(e.target.value)); setStep(1); setError(""); }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        {Array.from({ length: room.capacity }, (_, i) => i + 1).map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Children</label>
+                      <select value={children} onChange={(e) => { setChildren(Number(e.target.value)); setStep(1); setError(""); }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        {Array.from({ length: room.capacity + 1 }, (_, i) => i).map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {totalGuests > 0 && totalGuests > room.capacity && !extraBed && (
+                    <div className="text-yellow-600 text-sm bg-yellow-50 p-3 rounded-lg">
+                      Guest count exceeds room capacity ({room.capacity}). Add an extra bed below.
+                    </div>
+                  )}
+
+                  <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input type="checkbox" checked={extraBed} onChange={(e) => { setExtraBed(e.target.checked); setStep(1); setError(""); }}
+                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Add Extra Bed</span>
+                      <span className="text-sm text-gray-400 ml-2">+${room.extraBedPrice}/night</span>
+                    </div>
+                  </label>
+
+                  {totalGuests > maxCapacity && (
+                    <div className="text-red-500 text-sm">
+                      Maximum {maxCapacity} guests allowed. Reduce guest count.
+                    </div>
+                  )}
+
                   {nights > 0 && (
                     <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
-                      <div className="flex justify-between"><span>${room.price} x {nights} nights</span><span>${total}</span></div>
-                      <div className="border-t pt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-blue-600">${total}</span></div>
+                      <div className="flex justify-between"><span>${room.price} x {nights} nights</span><span>${roomCost}</span></div>
+                      {extraBed && (
+                        <div className="flex justify-between text-gray-600">
+                          <span>Extra bed ${room.extraBedPrice} x {nights}</span><span>+${extraBedCost}</span>
+                        </div>
+                      )}
+                      <div className="border-t pt-2 flex justify-between font-bold text-base">
+                        <span>Total</span><span className="text-blue-600">${total}</span>
+                      </div>
                     </div>
                   )}
 
                   {step === 1 && (
-                    <button onClick={handleCheckAvailability} className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium transition">
+                    <button onClick={handleCheckAvailability} disabled={totalGuests > maxCapacity}
+                      className={`w-full text-white py-3 rounded-lg font-medium transition ${totalGuests > maxCapacity ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}>
                       Check Availability
                     </button>
                   )}
