@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "resort_auth";
+const SESSION_KEY = "resort_session";
 
 const ADMIN_CREDENTIALS = { email: "admin@serenitybay.com", password: "admin123", name: "Admin", role: "admin" };
 
@@ -45,7 +46,11 @@ function validate(fields) {
 
 function getStoredUser() {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!sessionStorage.getItem(SESSION_KEY)) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -62,7 +67,8 @@ export function AuthProvider({ children }) {
         return { success: false, errors: { email: "Invalid admin credentials" } };
       }
       const userData = { id: "admin", name: ADMIN_CREDENTIALS.name, email: ADMIN_CREDENTIALS.email, role: ADMIN_CREDENTIALS.role, phone: "" };
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+      sessionStorage.setItem(SESSION_KEY, Date.now().toString());
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
       setUser(userData);
       return { success: true, user: userData };
     }
@@ -77,7 +83,8 @@ export function AuthProvider({ children }) {
     if (!found) return { success: false, errors: { email: "Invalid email or password. Please check your credentials or register a new account." } };
 
     const userData = { id: found.id, name: found.name, email: found.email, role: found.role, phone: found.phone };
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+    sessionStorage.setItem(SESSION_KEY, Date.now().toString());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
     setUser(userData);
     return { success: true, user: userData };
   };
@@ -98,7 +105,8 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(STORAGE_KEY);
     setUser(null);
   };
 
