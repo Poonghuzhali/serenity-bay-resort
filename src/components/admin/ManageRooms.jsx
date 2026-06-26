@@ -36,7 +36,7 @@ export default function ManageRooms() {
                       <p className="text-sm text-gray-500">{room.type.charAt(0).toUpperCase() + room.type.slice(1)} · {room.size} · {room.beds}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-blue-600">${room.price}<span className="text-xs text-gray-400">/night</span></p>
+                      <p className="text-lg font-bold text-blue-600">₹{room.price.toLocaleString("en-IN")}<span className="text-xs text-gray-400">/night</span></p>
                       <p className="text-sm font-medium">
                         <span className={available > 0 ? "text-green-600" : "text-red-600"}>{available}</span>
                         <span className="text-gray-400">/{room.totalRooms} available</span>

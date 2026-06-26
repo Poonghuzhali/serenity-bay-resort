@@ -30,7 +30,7 @@ export default function AdminDashboard() {
     { label: "Total Bookings", value: allBookings.length, color: "bg-blue-500" },
     { label: "Active Stays", value: activeBookings.length, color: "bg-green-500" },
     { label: "Cancelled", value: cancelledBookings.length, color: "bg-red-500" },
-    { label: "Total Revenue", value: `$${totalRevenue}`, color: "bg-purple-500" },
+    { label: "Total Revenue", value: `₹${totalRevenue.toLocaleString("en-IN")}`, color: "bg-purple-500" },
     { label: "Room Types", value: rooms.length, color: "bg-yellow-500" },
     { label: "Total Rooms", value: rooms.reduce((s, r) => s + r.totalRooms, 0), color: "bg-indigo-500" },
     { label: "Unread Messages", value: unreadMessages, color: "bg-pink-500", link: "/admin/messages" },
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
           const content = (
             <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition">
               <div className={`w-12 h-12 ${s.color} rounded-lg flex items-center justify-center text-white text-lg mb-3`}>
-                {s.label === "Total Revenue" ? "$" : s.label === "Unread Messages" ? "✉" : s.label === "Registered Users" ? "👤" : s.value.toString()[0]}
+                {s.label === "Total Revenue" ? "₹" : s.label === "Unread Messages" ? "✉" : s.label === "Registered Users" ? "👤" : s.value.toString()[0]}
               </div>
               <p className="text-gray-500 text-sm">{s.label}</p>
               <p className="text-2xl font-bold text-gray-800">{s.value}</p>
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
                   <td className="py-3 pr-4">{b.roomName}</td>
                   <td className="py-3 pr-4">{b.checkIn}</td>
                   <td className="py-3 pr-4">{b.checkOut}</td>
-                  <td className="py-3 pr-4 font-medium">${b.totalAmount}</td>
+                  <td className="py-3 pr-4 font-medium">₹{(b.totalAmount || 0).toLocaleString("en-IN")}</td>
                   <td className="py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${b.status === "confirmed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                       {b.status}

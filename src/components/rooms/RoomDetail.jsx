@@ -198,7 +198,7 @@ export default function RoomDetail() {
                       className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
                     <div>
                       <span className="text-sm font-medium text-gray-700">Add Extra Bed</span>
-                      <span className="text-sm text-gray-400 ml-2">+${room.extraBedPrice}/night</span>
+                      <span className="text-sm text-gray-400 ml-2">+₹{room.extraBedPrice}/night</span>
                     </div>
                   </label>
 
@@ -210,14 +210,14 @@ export default function RoomDetail() {
 
                   {nights > 0 && (
                     <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
-                      <div className="flex justify-between"><span>${room.price} x {nights} nights</span><span>${roomCost}</span></div>
+                      <div className="flex justify-between"><span>₹{room.price.toLocaleString("en-IN")} x {nights} nights</span><span>₹{roomCost.toLocaleString("en-IN")}</span></div>
                       {extraBed && (
                         <div className="flex justify-between text-gray-600">
-                          <span>Extra bed ${room.extraBedPrice} x {nights}</span><span>+${extraBedCost}</span>
+                          <span>Extra bed ₹{room.extraBedPrice.toLocaleString("en-IN")} x {nights}</span><span>+₹{extraBedCost.toLocaleString("en-IN")}</span>
                         </div>
                       )}
                       <div className="border-t pt-2 flex justify-between font-bold text-base">
-                        <span>Total</span><span className="text-blue-600">${total}</span>
+                        <span>Total</span><span className="text-blue-600">₹{total.toLocaleString("en-IN")}</span>
                       </div>
                     </div>
                   )}

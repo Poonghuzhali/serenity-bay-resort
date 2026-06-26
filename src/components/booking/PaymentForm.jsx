@@ -55,7 +55,7 @@ export default function PaymentForm({ onSubmit, total, roomName }) {
       <h4 className="font-semibold text-gray-800 mb-3">💳 Payment Details</h4>
       <div className="bg-gray-50 p-3 rounded-lg mb-4 text-sm">
         <div className="flex justify-between"><span className="text-gray-600">Room:</span><span>{roomName}</span></div>
-        <div className="flex justify-between font-bold mt-1"><span>Total:</span><span className="text-blue-600">${total}</span></div>
+        <div className="flex justify-between font-bold mt-1"><span>Total:</span><span className="text-blue-600">₹{total.toLocaleString("en-IN")}</span></div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -86,7 +86,7 @@ export default function PaymentForm({ onSubmit, total, roomName }) {
               </svg>
               Processing Payment...
             </span>
-          ) : "Pay $" + total}
+          ) : "Pay ₹" + total.toLocaleString("en-IN")}
         </button>
       </form>
 

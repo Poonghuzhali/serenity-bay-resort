@@ -40,7 +40,7 @@ export default function CustomerDashboard() {
             <p className="text-gray-500 text-sm">Active Stays</p>
           </div>
           <div className="bg-white rounded-xl shadow-md p-6 text-center">
-            <p className="text-3xl font-bold text-orange-600">${bookings.reduce((s, b) => s + (b.totalAmount || 0), 0)}</p>
+            <p className="text-3xl font-bold text-orange-600">₹{bookings.reduce((s, b) => s + (b.totalAmount || 0), 0).toLocaleString("en-IN")}</p>
             <p className="text-gray-500 text-sm">Total Spent</p>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function CustomerDashboard() {
                       <div className="flex gap-4 mt-2 text-sm text-gray-600">
                         <span>📅 {b.checkIn} → {b.checkOut}</span>
                         <span>👤 {b.adults} Adult{b.adults > 1 ? "s" : ""}{b.children > 0 ? `, ${b.children} Child${b.children > 1 ? "ren" : ""}` : ""}{b.extraBed ? " +1 Bed" : ""}</span>
-                        <span>💰 ${b.totalAmount}</span>
+                        <span>💰 ₹{(b.totalAmount || 0).toLocaleString("en-IN")}</span>
                       </div>
                     </div>
                     <div className="text-right">

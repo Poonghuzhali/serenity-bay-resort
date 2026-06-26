@@ -4,7 +4,7 @@ const rooms = [
     name: "Deluxe Ocean Room",
     type: "deluxe",
     description: "Spacious room with breathtaking ocean views, king-sized bed, and modern amenities.",
-    price: 250,
+    price: 20000,
     capacity: 2,
     size: "45 m²",
     beds: "1 King Bed",
@@ -16,14 +16,14 @@ const rooms = [
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
     ],
     totalRooms: 10,
-    extraBedPrice: 50
+    extraBedPrice: 4000
   },
   {
     id: 2,
     name: "Premium Suite",
     type: "suite",
     description: "Luxurious suite with separate living area, panoramic views, and premium furnishings.",
-    price: 450,
+    price: 35000,
     capacity: 4,
     size: "75 m²",
     beds: "1 King Bed + Sofa Bed",
@@ -35,14 +35,14 @@ const rooms = [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80"
     ],
     totalRooms: 5,
-    extraBedPrice: 60
+    extraBedPrice: 5000
   },
   {
     id: 3,
     name: "Beachfront Villa",
     type: "villa",
     description: "Private villa directly on the beach with private pool, garden, and outdoor living space.",
-    price: 750,
+    price: 65000,
     capacity: 6,
     size: "120 m²",
     beds: "2 King Beds + 2 Twin Beds",
@@ -54,14 +54,14 @@ const rooms = [
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80"
     ],
     totalRooms: 3,
-    extraBedPrice: 75
+    extraBedPrice: 6000
   },
   {
     id: 4,
     name: "Penthouse Suite",
     type: "penthouse",
     description: "Top-floor penthouse with 360° views, private rooftop terrace, and exclusive amenities.",
-    price: 1200,
+    price: 100000,
     capacity: 4,
     size: "150 m²",
     beds: "2 King Beds",
@@ -73,14 +73,14 @@ const rooms = [
       "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80"
     ],
     totalRooms: 2,
-    extraBedPrice: 80
+    extraBedPrice: 8000
   },
   {
     id: 5,
     name: "Standard Garden Room",
     type: "standard",
     description: "Cozy room with garden views, perfect for budget-conscious travelers.",
-    price: 150,
+    price: 12000,
     capacity: 2,
     size: "30 m²",
     beds: "1 Queen Bed",
@@ -91,14 +91,14 @@ const rooms = [
       "https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=800&q=80"
     ],
     totalRooms: 15,
-    extraBedPrice: 40
+    extraBedPrice: 3000
   },
   {
     id: 6,
     name: "Family Suite",
     type: "family",
     description: "Two-bedroom suite ideal for families, with kid-friendly amenities and connecting rooms.",
-    price: 600,
+    price: 50000,
     capacity: 6,
     size: "90 m²",
     beds: "1 King + 2 Queen Beds",
@@ -109,7 +109,7 @@ const rooms = [
       "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80"
     ],
     totalRooms: 6,
-    extraBedPrice: 60
+    extraBedPrice: 5000
   }
 ];
 

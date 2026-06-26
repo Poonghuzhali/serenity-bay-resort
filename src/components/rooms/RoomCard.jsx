@@ -6,7 +6,7 @@ export default function RoomCard({ room }) {
       <div className="relative h-56 overflow-hidden">
         <img src={room.image} alt={room.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
         <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-          ${room.price}<span className="text-xs">/night</span>
+          ₹{room.price.toLocaleString("en-IN")}<span className="text-xs">/night</span>
         </div>
         <div className="absolute top-4 left-4 bg-white/90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
           {room.type.charAt(0).toUpperCase() + room.type.slice(1)}

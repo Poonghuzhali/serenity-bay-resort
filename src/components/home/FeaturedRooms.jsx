@@ -17,7 +17,7 @@ export default function FeaturedRooms() {
               <div className="relative h-56 overflow-hidden">
                 <img src={room.image} alt={room.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                 <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  ${room.price}/night
+                  ₹{room.price.toLocaleString("en-IN")}/night
                 </div>
               </div>
               <div className="p-6">

@@ -1,7 +1,7 @@
 const reviews = [
   {
     id: 1,
-    name: "Sarah Johnson",
+    name: "Priya Sharma",
     avatar: "https://i.pravatar.cc/80?img=1",
     rating: 5,
     text: "Absolutely stunning resort! The ocean view from our Deluxe room was breathtaking. The staff went above and beyond.",
@@ -9,7 +9,7 @@ const reviews = [
   },
   {
     id: 2,
-    name: "Michael Chen",
+    name: "Arun Patel",
     avatar: "https://i.pravatar.cc/80?img=3",
     rating: 5,
     text: "The Beachfront Villa exceeded our expectations. Private pool, direct beach access, and incredible service.",
@@ -17,7 +17,7 @@ const reviews = [
   },
   {
     id: 3,
-    name: "Emily Davis",
+    name: "Ananya Gupta",
     avatar: "https://i.pravatar.cc/80?img=5",
     rating: 4,
     text: "Wonderful family vacation. The Family Suite was perfect for us, and the kids loved the activities.",
@@ -25,7 +25,7 @@ const reviews = [
   },
   {
     id: 4,
-    name: "James Wilson",
+    name: "Vikram Singh",
     avatar: "https://i.pravatar.cc/80?img=8",
     rating: 5,
     text: "Penthouse Suite was out of this world! The rooftop terrace views at sunset are unforgettable.",

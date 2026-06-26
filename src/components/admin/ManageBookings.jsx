@@ -92,7 +92,7 @@ export default function ManageBookings() {
                     <td className="p-4">{b.checkIn}</td>
                     <td className="p-4">{b.checkOut}</td>
                     <td className="p-4">{nights}</td>
-                    <td className="p-4 font-medium">${b.totalAmount}</td>
+                    <td className="p-4 font-medium">₹{(b.totalAmount || 0).toLocaleString("en-IN")}</td>
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${b.status === "confirmed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                         {b.status}

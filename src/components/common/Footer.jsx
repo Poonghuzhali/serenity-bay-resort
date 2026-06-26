@@ -23,8 +23,8 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Contact Info</h3>
             <ul className="space-y-2 text-sm">
-              <li>📍 123 Beach Road, Maldives</li>
-              <li>📞 +1 (555) 123-4567</li>
+              <li>📍 Calangute Beach, North Goa, India</li>
+              <li>📞 +91 98765 43210</li>
               <li>✉️ info@serenitybay.com</li>
             </ul>
           </div>

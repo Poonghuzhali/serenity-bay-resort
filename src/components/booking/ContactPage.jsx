@@ -102,12 +102,12 @@ export default function ContactPage() {
           <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <h3 className="font-semibold text-gray-800 mb-4">📍 Visit Us</h3>
-              <p className="text-gray-600">123 Beach Road,<br />North Malé Atoll,<br />Maldives 20026</p>
+              <p className="text-gray-600">Calangute Beach,<br />North Goa,<br />India 403515</p>
             </div>
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <h3 className="font-semibold text-gray-800 mb-4">📞 Call Us</h3>
-              <p className="text-gray-600">Reservations: +1 (555) 123-4567</p>
-              <p className="text-gray-600">Front Desk: +1 (555) 987-6543</p>
+              <p className="text-gray-600">Reservations: +91 98765 43210</p>
+              <p className="text-gray-600">Front Desk: +91 98765 43211</p>
               <p className="text-sm text-gray-400 mt-2">Available 24/7</p>
             </div>
             <div className="bg-white rounded-2xl shadow-xl p-8">
