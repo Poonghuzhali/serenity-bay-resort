@@ -1,10 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import rooms from "../../data/rooms";
 import { useBooking } from "../../context/BookingContext";
 import { useAuth } from "../../context/AuthContext";
 import PaymentForm from "../booking/PaymentForm";
 import BookingConfirmation from "../booking/BookingConfirmation";
+
+const DRAFT_KEY = "room_draft";
+
+function loadDraft(roomId) {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const draft = JSON.parse(raw);
+    return draft.roomId === roomId ? draft : null;
+  } catch { return null; }
+}
+
+function saveDraft(data) {
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+}
 
 export default function RoomDetail() {
   const { id } = useParams();
@@ -16,19 +35,28 @@ export default function RoomDetail() {
   const today = new Date().toISOString().split("T")[0];
   const room = rooms.find((r) => r.id === Number(id));
 
-  const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || "");
-  const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || "");
-  const [adults, setAdults] = useState(Number(searchParams.get("adults")) || 1);
-  const [children, setChildren] = useState(Number(searchParams.get("children")) || 0);
-  const [quantity, setQuantity] = useState(Math.max(1, Number(searchParams.get("qty")) || 1));
-  const [extraBed, setExtraBed] = useState(false);
+  const draft = loadDraft(Number(id));
+
+  const [checkIn, setCheckIn] = useState(draft?.checkIn ?? searchParams.get("checkIn") ?? "");
+  const [checkOut, setCheckOut] = useState(draft?.checkOut ?? searchParams.get("checkOut") ?? "");
+  const [adults, setAdults] = useState(draft?.adults ?? (Number(searchParams.get("adults")) || 1));
+  const [children, setChildren] = useState(draft?.children ?? (Number(searchParams.get("children")) || 0));
+  const [quantity, setQuantity] = useState(draft?.quantity ?? Math.max(1, Number(searchParams.get("qty")) || 1));
+  const [extraBed, setExtraBed] = useState(draft?.extraBed ?? false);
   const [activeImg, setActiveImg] = useState(0);
-  const [step, setStep] = useState(1);
-  const [availability, setAvailability] = useState(null);
+  const [step, setStep] = useState(draft?.step ?? 1);
+  const [availability, setAvailability] = useState(draft?.availability ?? null);
   const [bookingResult, setBookingResult] = useState(null);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (room) {
+      saveDraft({ roomId: room.id, checkIn, checkOut, adults, children, quantity, extraBed, step, availability });
+    }
+  }, [room, checkIn, checkOut, adults, children, quantity, extraBed, step, availability]);
+
   if (!room) {
+    clearDraft();
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -93,6 +121,7 @@ export default function RoomDetail() {
     });
 
     if (result.success) {
+      clearDraft();
       setBookingResult(result.booking);
       setStep(3);
       return null;
